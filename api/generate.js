@@ -5,7 +5,7 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: "No prompt" });
   }
 
-  // 1. Lancer génération
+  // 1. Lancer génération IA
   let response = await fetch("https://api.replicate.com/v1/predictions", {
     method: "POST",
     headers: {
@@ -20,31 +20,33 @@ export default async function handler(req, res) {
 
   let prediction = await response.json();
 
-  // 2. Attendre résultat
+  // 2. Vérifier résultat
   let url = prediction.urls.get;
 
-  let output;
+  let result;
 
-  for (let i = 0; i < 10; i++) {
+  for (let i = 0; i < 15; i++) {
     let check = await fetch(url, {
       headers: {
         "Authorization": "Token r8_IXf**********************************"
       }
     });
 
-    let result = await check.json();
+    let data = await check.json();
 
-    if (result.status === "succeeded") {
-      output = result.output;
+    if (data.status === "succeeded") {
+      result = data.output;
       break;
     }
 
-    if (result.status === "failed") {
+    if (data.status === "failed") {
       return res.status(500).json({ error: "Generation failed" });
     }
 
     await new Promise(r => setTimeout(r, 2000));
   }
 
-  res.status(200).json({ image: output });
+  return res.status(200).json({
+    image: result
+  });
 }
