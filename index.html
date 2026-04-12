@@ -1,7 +1,45 @@
 <!DOCTYPE html>
-<html>
-<body style="background:black;color:white;text-align:center;padding:50px;">
-<h1>🎬 AI Video Generator</h1>
-<p>Ton site fonctionne 🎉</p>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>AI Video Pro</title>
+</head>
+
+<body style="background:black;color:white;text-align:center;font-family:Arial;padding:40px;">
+
+<h1>🎬 AI Video Pro</h1>
+
+<p>Écris ton idée de vidéo :</p>
+
+<textarea id="prompt" style="width:80%;height:120px;"></textarea><br><br>
+
+<button onclick="generate()">Générer IA</button>
+
+<div id="result" style="margin-top:30px;"></div>
+
+<script>
+async function generate() {
+  let prompt = document.getElementById("prompt").value;
+
+  if (!prompt) {
+    alert("Écris quelque chose !");
+    return;
+  }
+
+  document.getElementById("result").innerHTML = "⏳ Génération en cours...";
+
+  const res = await fetch("/api/generate", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ prompt })
+  });
+
+  const data = await res.json();
+
+  document.getElementById("result").innerHTML =
+    "🎬 Résultat IA :<br><pre>" + JSON.stringify(data, null, 2) + "</pre>";
+}
+</script>
+
 </body>
 </html>
